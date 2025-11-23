@@ -152,25 +152,25 @@ const App: React.FC = () => {
 
   // Background Component based on Theme
   const Background = () => (
-    <div className={`fixed inset-0 overflow-hidden pointer-events-none -z-10 transition-colors duration-700 ${isDark ? 'bg-[#020617]' : 'bg-slate-50'}`}>
+    <div className={`fixed inset-0 overflow-hidden pointer-events-none -z-10 transition-colors duration-1000 ease-liquid ${isDark ? 'bg-[#050505]' : 'bg-[#f8f8f8]'}`}>
       {isDark ? (
         <>
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-900/30 rounded-full blur-[100px] animate-blob mix-blend-screen" />
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-900/30 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-screen" />
-          <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-indigo-900/20 rounded-full blur-[100px] animate-blob animation-delay-4000 mix-blend-screen" />
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
+          <div className="absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] bg-indigo-950/20 rounded-full blur-[120px] animate-blob mix-blend-screen" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] bg-purple-950/10 rounded-full blur-[120px] animate-blob animation-delay-4000 mix-blend-screen" />
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-100 contrast-150"></div>
         </>
       ) : (
         <>
-          <div className="absolute top-0 left-0 right-0 h-[50vh] bg-gradient-to-b from-slate-200/50 to-transparent" />
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 brightness-100 contrast-100"></div>
+          <div className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] bg-gray-200/40 rounded-full blur-[100px] animate-blob" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] bg-slate-200/30 rounded-full blur-[100px] animate-blob animation-delay-2000" />
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.015] brightness-100 contrast-100"></div>
         </>
       )}
     </div>
   );
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 20); // Sensitive scroll trigger
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -362,81 +362,82 @@ const App: React.FC = () => {
   const textSecondary = isDark ? "text-white/60" : "text-black/60";
   
   return (
-    <div className={`min-h-screen font-sans selection:bg-purple-500/30 ${textPrimary}`}>
+    <div className={`min-h-screen font-sans selection:bg-gray-500/30 ${textPrimary}`}>
       <Background />
 
-      {/* Hero Section - Compact Branding (Hidden in Map View) */}
+      {/* Hero Section - Redesigned for Minimalist Premium Look */}
       {viewMode !== 'map' && (
-        <header className="pt-12 pb-8 px-6 max-w-7xl mx-auto">
-          <div className="max-w-2xl animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-serif font-bold leading-tight mb-2 tracking-tight">
-              LUMINA.
+        <header className="pt-12 pb-8 px-6 max-w-7xl mx-auto text-center">
+          <div className="animate-fade-in flex flex-col items-center">
+            {/* Extremely spaced, thin serif font for luxury feel */}
+            <h1 className="text-5xl md:text-8xl font-serif font-thin tracking-[0.2em] leading-tight mb-2 uppercase mix-blend-overlay opacity-90">
+              Lumina
             </h1>
-            <p className={`text-lg leading-relaxed max-w-lg font-serif ${textSecondary} mb-0`}>
-              光与影的精选集，记录瞬间的永恒。
-              <br />
-              <span className="text-sm opacity-70">A curated collection of moments in light and shadow.</span>
+            <div className={`w-24 h-px mb-6 ${isDark ? 'bg-white/20' : 'bg-black/20'}`}></div>
+            <p className={`text-[10px] md:text-xs tracking-[0.4em] uppercase font-sans mb-0 ${textSecondary}`}>
+              Light & Shadow Collection
             </p>
           </div>
         </header>
       )}
 
-      {/* Unified Sticky Utility Bar */}
-      <div className={`sticky top-0 z-40 border-b transition-all duration-300 backdrop-blur-xl
-        ${isDark ? 'bg-black/80 border-white/5' : 'bg-white/80 border-black/5'}
-        ${scrolled ? 'shadow-lg shadow-black/5' : ''}
+      {/* Unified Sticky Utility Bar - Liquid Glass Style */}
+      <div className={`sticky top-0 z-40 transition-all duration-500 ease-liquid
+        ${isDark ? 'bg-black/40' : 'bg-white/60'}
+        backdrop-blur-2xl border-b 
+        ${scrolled ? (isDark ? 'border-white/5 shadow-2xl shadow-black/10' : 'border-white/20 shadow-xl shadow-black/5') : 'border-transparent'}
       `}>
-        <div className="max-w-7xl mx-auto px-6 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
           
-          {/* Left: Text Tabs */}
+          {/* Left: Text Tabs with Liquid Hover */}
           <div className="flex gap-6 overflow-x-auto no-scrollbar items-center">
              {FEED_TABS.map(tab => (
                <button
                  key={tab}
                  onClick={() => handleTabClick(tab)}
-                 className={`text-base font-serif transition-all whitespace-nowrap relative py-1
+                 className={`text-sm md:text-base font-serif transition-all duration-500 ease-liquid whitespace-nowrap relative py-2 px-1 hover:scale-110 active:scale-95
                     ${activeTab === tab 
-                      ? (isDark ? 'text-white font-bold' : 'text-black font-bold')
-                      : (isDark ? 'text-white/40 hover:text-white/80' : 'text-black/40 hover:text-black/80')
+                      ? (isDark ? 'text-white font-semibold' : 'text-black font-semibold')
+                      : (isDark ? 'text-white/40 hover:text-white' : 'text-black/40 hover:text-black')
                     }
                  `}
                >
                  {tab}
                  {activeTab === tab && (
-                   <span className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${isDark ? 'bg-white' : 'bg-black'}`} />
+                   <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${isDark ? 'bg-white' : 'bg-black'}`} />
                  )}
                </button>
              ))}
              
-             {/* Map Toggle (Globe Icon) */}
+             {/* Map Toggle (Globe Icon) with Liquid Hover */}
              <button
                onClick={() => setViewMode(v => v === 'grid' ? 'map' : 'grid')}
-               className={`p-1 rounded-full transition-colors flex items-center justify-center
+               className={`p-2 rounded-full transition-all duration-500 ease-liquid flex items-center justify-center hover:scale-110 active:scale-95
                  ${viewMode === 'map' 
                    ? (isDark ? 'text-white bg-white/10' : 'text-black bg-black/5') 
-                   : (isDark ? 'text-white/30 hover:text-white/80' : 'text-black/30 hover:text-black/80')
+                   : (isDark ? 'text-white/30 hover:text-white' : 'text-black/30 hover:text-black')
                  }
                `}
                title={viewMode === 'map' ? "切换回网格" : "世界地图模式"}
              >
-               <Globe size={18} />
+               <Globe size={18} strokeWidth={1.5} />
              </button>
           </div>
 
-          {/* Right: Filters, Theme, Admin (Compact) */}
+          {/* Right: Filters, Theme, Admin (Compact & Liquid) */}
           <div className="flex items-center justify-between md:justify-end gap-3 overflow-x-auto no-scrollbar">
             
             {/* Categories - Compact Pills */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               {Object.values(Category).map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
                   className={`
-                    px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-all
+                    px-3 py-1.5 rounded-full text-[10px] md:text-xs tracking-wider font-medium whitespace-nowrap transition-all duration-500 ease-liquid hover:scale-105 active:scale-95
                     ${activeCategory === cat 
-                      ? (isDark ? 'bg-white text-black' : 'bg-black text-white') 
-                      : (isDark ? 'text-white/50 hover:bg-white/10 hover:text-white' : 'text-black/50 hover:bg-black/5 hover:text-black')
+                      ? (isDark ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.3)]' : 'bg-black text-white shadow-[0_5px_15px_rgba(0,0,0,0.2)]') 
+                      : (isDark ? 'text-white/50 hover:bg-white/10 hover:text-white border border-transparent hover:border-white/10' : 'text-black/50 hover:bg-black/5 hover:text-black border border-transparent hover:border-black/5')
                     }
                   `}
                 >
@@ -446,21 +447,21 @@ const App: React.FC = () => {
             </div>
 
             {/* Divider */}
-            <div className={`w-px h-4 mx-2 flex-shrink-0 ${isDark ? 'bg-white/10' : 'bg-black/10'}`} />
+            <div className={`w-px h-6 mx-1 flex-shrink-0 ${isDark ? 'bg-white/10' : 'bg-black/10'}`} />
 
             {/* Theme Toggle */}
             <button 
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors flex-shrink-0
+              className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-500 ease-liquid hover:scale-110 active:scale-90 flex-shrink-0
                 ${isDark ? 'text-white/60 hover:bg-white/10 hover:text-white' : 'text-black/60 hover:bg-black/5 hover:text-black'}
               `}
             >
-              {isDark ? <Moon size={14} /> : <Sun size={14} />}
+              {isDark ? <Moon size={16} strokeWidth={1.5} /> : <Sun size={16} strokeWidth={1.5} />}
             </button>
 
             {/* Admin / Login */}
             {isAdmin ? (
-               <div className="flex items-center gap-1 flex-shrink-0">
+               <div className="flex items-center gap-2 flex-shrink-0">
                  {/* Toggle Management Mode */}
                  <button
                    onClick={() => {
@@ -468,29 +469,41 @@ const App: React.FC = () => {
                      if (!isManageMode && viewMode === 'map') setViewMode('grid');
                      setIsManageMode(!isManageMode);
                    }}
-                   className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors ${isManageMode ? 'bg-purple-500 text-white' : (isDark ? 'text-white/60 hover:bg-white/10' : 'text-black/60 hover:bg-black/5')}`}
+                   className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-500 ease-liquid hover:scale-110 active:scale-90 ${isManageMode ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/30' : (isDark ? 'text-white/60 hover:bg-white/10' : 'text-black/60 hover:bg-black/5')}`}
                    title="管理模式 (编辑/删除)"
                  >
-                   <Pencil size={14} />
+                   <Pencil size={16} strokeWidth={1.5} />
                  </button>
                  
                  {/* Upload */}
                  <button 
                   onClick={() => { setPhotoToEdit(null); setIsUploadOpen(true); }}
-                  className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors ${isDark ? 'text-white/60 hover:bg-white/10' : 'text-black/60 hover:bg-black/5'}`}
+                  className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-500 ease-liquid hover:scale-110 active:scale-90 ${isDark ? 'text-white/60 hover:bg-white/10' : 'text-black/60 hover:bg-black/5'}`}
                   title="上传图片"
                 >
-                  <Plus size={16} />
+                  <Plus size={18} strokeWidth={1.5} />
                 </button>
+
+                {/* Logout */}
+                <button
+                   onClick={() => {
+                     setIsAdmin(false);
+                     setIsManageMode(false);
+                   }}
+                   className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-500 ease-liquid hover:scale-110 active:scale-90 ${isDark ? 'text-white/60 hover:bg-white/10' : 'text-black/60 hover:bg-black/5'}`}
+                   title="退出登录"
+                 >
+                   <LogOut size={16} strokeWidth={1.5} />
+                 </button>
                </div>
             ) : (
               <button 
                 onClick={() => setIsLoginOpen(true)} 
-                className={`w-7 h-7 flex items-center justify-center rounded-full transition-colors flex-shrink-0
+                className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-500 ease-liquid hover:scale-110 active:scale-90 flex-shrink-0
                   ${isDark ? 'text-white/60 hover:bg-white/10 hover:text-white' : 'text-black/60 hover:bg-black/5 hover:text-black'}
                 `}
               >
-                <Settings size={14} />
+                <Settings size={16} strokeWidth={1.5} />
               </button>
             )}
           </div>
@@ -513,11 +526,11 @@ const App: React.FC = () => {
         ) : (
           // GRID VIEW
           <>
-            <div className="columns-2 md:columns-3 lg:columns-4 gap-2 md:gap-4 space-y-2 md:space-y-4">
+            <div className="columns-2 md:columns-3 lg:columns-4 gap-2 space-y-2">
               {visiblePhotos.map((photo) => (
                 <div 
                   key={photo.id} 
-                  className={`break-inside-avoid animate-fade-in relative group-container mb-2 z-0 hover:z-10 transition-all duration-300`}
+                  className={`break-inside-avoid animate-fade-in relative group-container mb-2 z-0 hover:z-10 transition-all duration-500 ease-liquid`}
                 >
                   <GlassCard 
                     theme={theme}
@@ -531,15 +544,15 @@ const App: React.FC = () => {
                       <img 
                         src={photo.url} 
                         alt={photo.title} 
-                        className={`w-full h-auto object-cover transform transition-transform duration-700 ${isManageMode ? '' : 'group-hover:scale-105'}`}
+                        className={`w-full h-auto object-cover transform transition-transform duration-700 ease-liquid ${isManageMode ? '' : 'group-hover:scale-105'}`}
                         loading="lazy"
                       />
                       
                       {/* Minimal Overlay - Info on Hover (Only if not in manage mode) */}
                       {!isManageMode && (
-                        <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4`}>
-                          <p className="text-white font-serif text-lg font-medium translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{photo.title}</p>
-                          <p className="text-white/70 text-xs uppercase tracking-wider translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">{photo.category}</p>
+                        <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4`}>
+                          <p className="text-white font-serif text-lg font-medium translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-liquid">{photo.title}</p>
+                          <p className="text-white/70 text-xs uppercase tracking-wider translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-liquid delay-75">{photo.category}</p>
                         </div>
                       )}
                     </div>
@@ -547,7 +560,7 @@ const App: React.FC = () => {
                   
                   {/* Manage Mode Interaction Overlay */}
                   {isManageMode && (
-                    <div className="absolute inset-0 z-[50] bg-black/20 backdrop-blur-[2px] border-2 border-dashed border-white/30 flex items-start justify-between p-2 pointer-events-auto">
+                    <div className="absolute inset-0 z-[50] bg-black/20 backdrop-blur-[2px] border-2 border-dashed border-white/30 flex items-start justify-between p-2 pointer-events-auto transition-all duration-300 animate-fade-in">
                       {/* Top Left: Edit */}
                       <button
                         type="button"
@@ -557,7 +570,7 @@ const App: React.FC = () => {
                           setPhotoToEdit(photo);
                           setIsUploadOpen(true);
                         }}
-                        className="bg-blue-500 text-white p-2 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                        className="bg-blue-500/90 text-white p-2.5 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-transform duration-300 cursor-pointer backdrop-blur-sm"
                         title="编辑"
                       >
                         <Pencil size={14} />
@@ -567,7 +580,7 @@ const App: React.FC = () => {
                       <button
                         type="button"
                         onClick={(e) => handleDeletePhoto(e, photo.id)}
-                        className="bg-red-500 text-white p-2 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                        className="bg-red-500/90 text-white p-2.5 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-transform duration-300 cursor-pointer backdrop-blur-sm"
                         title="删除"
                       >
                         <Trash2 size={14} />
@@ -594,8 +607,8 @@ const App: React.FC = () => {
 
       {/* Footer - Hidden in Map View */}
       {viewMode !== 'map' && (
-        <footer className={`border-t py-12 text-center text-xs uppercase tracking-widest ${isDark ? 'border-white/5 text-white/20' : 'border-black/5 text-black/20'}`}>
-          <p>Lumina Portfolio</p>
+        <footer className={`border-t py-12 text-center text-[10px] uppercase tracking-[0.2em] font-light ${isDark ? 'border-white/5 text-white/20' : 'border-black/5 text-black/20'}`}>
+          <p>© {new Date().getFullYear()} LUMINA. All Rights Reserved.</p>
         </footer>
       )}
 
