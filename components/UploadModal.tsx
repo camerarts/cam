@@ -130,6 +130,7 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpl
   const [location, setLocation] = useState('');
   const [date, setDate] = useState('');
   const [focalLength, setFocalLength] = useState('');
+  const [gpsCoords, setGpsCoords] = useState<{lat: number, lng: number} | undefined>(undefined);
 
   const isDark = theme === 'dark';
   const textPrimary = isDark ? "text-white" : "text-black";
@@ -152,10 +153,11 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpl
       setLocation(editingPhoto.exif.location);
       setDate(editingPhoto.exif.date);
       setFocalLength(editingPhoto.exif.focalLength || '');
+      setGpsCoords(editingPhoto.exif.latitude && editingPhoto.exif.longitude ? { lat: editingPhoto.exif.latitude, lng: editingPhoto.exif.longitude } : undefined);
     } else if (isOpen && !editingPhoto) {
       // Reset for new upload
       setImageUrl(''); setImageDims({width:0,height:0}); setTitle(''); setRating(5);
-      setCamera(''); setLens(''); setAperture(''); setShutter(''); setIso(''); setLocation(''); setFocalLength('');
+      setCamera(''); setLens(''); setAperture(''); setShutter(''); setIso(''); setLocation(''); setFocalLength(''); setGpsCoords(undefined);
       
       // Default date to today
       const today = new Date();
@@ -275,7 +277,6 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpl
 
                 const exposure = getTag('ExposureTime');
                 if (exposure) {
-                    // ExposureTime can be a Number or a Fraction object
                     if (typeof exposure === 'number') {
                         setShutter(exposure < 1 ? `1/${Math.round(1/exposure)}s` : `${exposure}s`);
                     } else if (exposure.numerator && exposure.denominator) {
@@ -291,10 +292,35 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpl
 
                 const dateTag = getTag('DateTimeOriginal');
                 if (dateTag) {
-                    // Format: "2023:10:24 14:30:00" -> "2023-10-24"
                     const parts = dateTag.split(' ')[0].replace(/:/g, '-');
                     setDate(parts);
                 }
+
+                // Extract GPS
+                const lat = getTag("GPSLatitude");
+                const latRef = getTag("GPSLatitudeRef");
+                const lon = getTag("GPSLongitude");
+                const lonRef = getTag("GPSLongitudeRef");
+
+                if (lat && lon && latRef && lonRef) {
+                   const convertDMSToDD = (dms: number[], ref: string) => {
+                       let dd = dms[0] + dms[1] / 60 + dms[2] / 3600;
+                       if (ref === "S" || ref === "W") dd = dd * -1;
+                       return dd;
+                   };
+                   
+                   // Ensure dms is array of numbers (exif-js returns Number objects sometimes)
+                   const safeLat = [Number(lat[0]), Number(lat[1]), Number(lat[2])];
+                   const safeLon = [Number(lon[0]), Number(lon[1]), Number(lon[2])];
+                   
+                   const decLat = convertDMSToDD(safeLat, latRef);
+                   const decLon = convertDMSToDD(safeLon, lonRef);
+                   
+                   if (!isNaN(decLat) && !isNaN(decLon)) {
+                     setGpsCoords({ lat: decLat, lng: decLon });
+                   }
+                }
+
                 resolve();
             });
         });
@@ -333,7 +359,10 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpl
       width: imageDims.width,
       height: imageDims.height,
       rating: rating,
-      exif: { camera, lens, aperture, shutterSpeed: shutter, iso, location, date, focalLength }
+      exif: { 
+        camera, lens, aperture, shutterSpeed: shutter, iso, location, date, focalLength,
+        latitude: gpsCoords?.lat, longitude: gpsCoords?.lng 
+      }
     };
 
     onUpload(photoData);
@@ -367,7 +396,6 @@ export const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpl
                   <span className="text-sm">点击选择或拖拽图片</span>
                 </div>
               )}
-              {/* Only allow re-uploading file if not in edit mode (simplification, can be enabled if needed) */}
               {!editingPhoto && (
                  <input type="file" accept="image/jpeg,image/tiff,image/png" onChange={handleFileChange} className="absolute inset-0 opacity-0 cursor-pointer" />
               )}
