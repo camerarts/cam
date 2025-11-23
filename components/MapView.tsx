@@ -100,73 +100,80 @@ export const MapView: React.FC<MapViewProps> = ({ photos, theme, onPhotoClick })
     markersRef.current = [];
 
     locationGroups.forEach(group => {
-      // Create a clean circle marker
-      const marker = L.circleMarker([group.latitude, group.longitude], {
-        radius: 6,
-        fillColor: theme === 'dark' ? '#fff' : '#000',
-        color: 'transparent',
-        weight: 0,
-        opacity: 1,
-        fillOpacity: 0.8
-      }).addTo(map);
+      // Create copies for continuous world wrapping (Center, East Copy, West Copy)
+      // This ensures markers appear on all "copies" of the world map when dragging endlessly
+      const positions = [
+          [group.latitude, group.longitude],
+          [group.latitude, group.longitude + 360],
+          [group.latitude, group.longitude - 360]
+      ];
 
-      // Create Popup Content using React Portal Logic
-      const popupDiv = document.createElement('div');
-      const root = createRoot(popupDiv);
-      
-      root.render(
-        <div className={`w-64 rounded-xl shadow-xl overflow-hidden backdrop-blur-md border animate-fade-in
-           ${theme === 'dark' ? 'bg-black/80 border-white/10 text-white' : 'bg-white/90 border-black/5 text-black'}
-        `}>
-          <div className={`p-3 border-b flex justify-between items-center ${theme === 'dark' ? 'border-white/10' : 'border-black/5'}`}>
-             <div>
-                <h3 className="font-serif font-medium text-sm leading-tight">{group.name}</h3>
-                <div className="flex items-center gap-1 opacity-50 text-[10px] uppercase tracking-wider mt-0.5">
-                  <MapPin size={8} />
-                  <span>{group.photos.length} 张照片</span>
-                </div>
-             </div>
-          </div>
-          <div className="p-2 grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar">
-             {group.photos.map(photo => (
-               <div 
-                 key={photo.id}
-                 onClick={(e) => {
-                   e.stopPropagation(); // prevent map click
-                   onPhotoClick(photo);
-                 }}
-                 className="aspect-square rounded-md overflow-hidden cursor-pointer relative group/item"
-               >
-                 <img 
-                   src={photo.url} 
-                   alt={photo.title} 
-                   className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-110"
-                 />
-                 <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-colors" />
+      positions.forEach(pos => {
+        // Create a clean circle marker with REDUCED RADIUS (3)
+        const marker = L.circleMarker(pos, {
+          radius: 3, // Reduced from 6 to 3
+          fillColor: theme === 'dark' ? '#fff' : '#000',
+          color: 'transparent',
+          weight: 0,
+          opacity: 1,
+          fillOpacity: 0.8
+        }).addTo(map);
+
+        // Create Popup Content using React Portal Logic
+        const popupDiv = document.createElement('div');
+        const root = createRoot(popupDiv);
+        
+        root.render(
+          <div className={`w-64 rounded-xl shadow-xl overflow-hidden backdrop-blur-md border animate-fade-in
+             ${theme === 'dark' ? 'bg-black/80 border-white/10 text-white' : 'bg-white/90 border-black/5 text-black'}
+          `}>
+            <div className={`p-3 border-b flex justify-between items-center ${theme === 'dark' ? 'border-white/10' : 'border-black/5'}`}>
+               <div>
+                  <h3 className="font-serif font-medium text-sm leading-tight">{group.name}</h3>
+                  <div className="flex items-center gap-1 opacity-50 text-[10px] uppercase tracking-wider mt-0.5">
+                    <MapPin size={8} />
+                    <span>{group.photos.length} 张照片</span>
+                  </div>
                </div>
-             ))}
+            </div>
+            <div className="p-2 grid grid-cols-2 gap-2 max-h-48 overflow-y-auto custom-scrollbar">
+               {group.photos.map(photo => (
+                 <div 
+                   key={photo.id}
+                   onClick={(e) => {
+                     e.stopPropagation(); // prevent map click
+                     onPhotoClick(photo);
+                   }}
+                   className="aspect-square rounded-md overflow-hidden cursor-pointer relative group/item"
+                 >
+                   <img 
+                     src={photo.url} 
+                     alt={photo.title} 
+                     className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-110"
+                   />
+                   <div className="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-colors" />
+                 </div>
+               ))}
+            </div>
           </div>
-        </div>
-      );
+        );
 
-      marker.bindPopup(popupDiv, {
-        className: 'custom-popup',
-        minWidth: 256,
-        maxWidth: 256,
-        closeButton: false,
-        offset: [0, -4]
+        marker.bindPopup(popupDiv, {
+          className: 'custom-popup',
+          minWidth: 256,
+          maxWidth: 256,
+          closeButton: false,
+          offset: [0, -4]
+        });
+
+        // Marker interactions - Hover radius reduced to 5
+        marker.on('mouseover', function (this: any) {
+          this.setStyle({ fillOpacity: 1, radius: 5 }); // Reduced from 9 to 5
+          this.openPopup();
+        });
+
+        markersRef.current.push(marker);
       });
-
-      // Marker interactions
-      marker.on('mouseover', function (this: any) {
-        this.setStyle({ fillOpacity: 1, radius: 9 });
-        this.openPopup();
-      });
-      // Optional: keep popup open if hovering the popup itself is desired, 
-      // but standard Leaflet behavior usually closes on mouseout unless carefully managed.
-      // For simplicity/stability on mobile/touch, we stick to click or hover-to-view.
-
-      markersRef.current.push(marker);
     });
 
   }, [theme, locationGroups, onPhotoClick]); 
