@@ -526,11 +526,11 @@ const App: React.FC = () => {
         ) : (
           // GRID VIEW
           <>
-            <div className="columns-2 md:columns-3 lg:columns-4 gap-2 space-y-2">
+            <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
               {visiblePhotos.map((photo) => (
                 <div 
                   key={photo.id} 
-                  className={`break-inside-avoid animate-fade-in relative group-container mb-2 z-0 hover:z-10 transition-all duration-500 ease-liquid`}
+                  className={`break-inside-avoid animate-fade-in relative group-container mb-4 z-0 hover:z-10 transition-all duration-500 ease-liquid`}
                 >
                   <GlassCard 
                     theme={theme}
